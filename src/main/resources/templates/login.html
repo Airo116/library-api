@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Вход в библиотеку</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 350px;
+        }
+
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: #764ba2;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .success {
+            color: #27ae60;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .forgot-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .forgot-link a {
+            color: #667eea;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h2>🔐 Вход в библиотеку</h2>
+
+    <div th:if="${param.error}" class="alert alert-danger">
+        Неверное имя пользователя или пароль
+    </div>
+
+    <div th:if="${param.registered}" class="success">
+        Регистрация успешна! Войдите в систему.
+    </div>
+
+    <div th:if="${param.logout}" class="success">
+        Вы вышли из системы
+    </div>
+
+    <form method="post" action="/login">
+
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div style="position: relative;">
+            <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">👤</span>
+            <input type="text" name="username" placeholder="Имя пользователя" style="padding-left: 35px;">
+        </div>
+
+        <div style="position: relative;">
+            <span style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%);">🔐</span>
+            <input type="password" name="password" placeholder="Пароль" onkeyup="checkCapsLock(event)" style="padding-left: 35px;">
+            <div id="capsWarning" style="color: orange; display: none;">⚠️ Caps Lock включён</div>
+        </div>
+
+        <button type="submit">Войти</button>
+    </form>
+
+    <!-- ✅ ССЫЛКА ВНЕ ФОРМЫ -->
+    <div class="forgot-link">
+        <a href="/forgot-password">Забыли пароль?</a>
+    </div>
+
+    <div class="register-link">
+        Нет аккаунта? <a href="/register">Зарегистрироваться</a>
+    </div>
+</div>
+
+
+<script>
+    function checkCapsLock(e) {
+        let warning = document.getElementById('capsWarning');
+           if (e && e.getModifierState) {
+        let warning = document.getElementById('capsWarning');
+        if (e.getModifierState('CapsLock')) {
+            warning.style.display = 'block';
+        } else {
+            warning.style.display = 'none';
+        }
+
+    }
+</script>
+</body>
+</html>

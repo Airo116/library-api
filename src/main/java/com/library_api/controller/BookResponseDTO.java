@@ -1,53 +1,33 @@
-package com.library_api.model;
+package com.library_api.dto;
 
-import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
-@Entity
-@Table(name = "books")
-public class Book {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class BookResponseDTO {
     private Long id;
-
-    @Column(nullable = false)
     private String title;
-
-    @Column(nullable = false)
     private String author;
-
-    @Column(name = "publication_year")
     private Integer publicationYear;
-
     private String genre;
-
     private String language;
-
-    @Column(name = "page_count")
     private Integer pageCount;
-
-    @Column(name = "added_date")
     private LocalDate addedDate;
+    private Boolean read;
 
-    @Column(name = "read")
-    private Boolean read = false;
+    public BookResponseDTO() {
+    }
 
-    @OneToMany(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Borrow> borrows = new ArrayList<>();
-
-
-
-    // Конструкторы
-    public Book() {}
-
-    public Book(String title, String author, Integer publicationYear) {
+    public BookResponseDTO(Long id, String title, String author, Integer publicationYear,
+                           String genre, String language, Integer pageCount,
+                           LocalDate addedDate, Boolean read) {
+        this.id = id;
         this.title = title;
         this.author = author;
         this.publicationYear = publicationYear;
-        this.addedDate = LocalDate.now();
+        this.genre = genre;
+        this.language = language;
+        this.pageCount = pageCount;
+        this.addedDate = addedDate;
+        this.read = read;
     }
 
     // Геттеры и сеттеры
@@ -66,23 +46,15 @@ public class Book {
     public String getGenre() { return genre; }
     public void setGenre(String genre) { this.genre = genre; }
 
+    public String getLanguage() { return language; }
+    public void setLanguage(String language) { this.language = language; }
+
     public Integer getPageCount() { return pageCount; }
     public void setPageCount(Integer pageCount) { this.pageCount = pageCount; }
 
     public LocalDate getAddedDate() { return addedDate; }
     public void setAddedDate(LocalDate addedDate) { this.addedDate = addedDate; }
 
-    public String getLanguage() { return language; }
-    public void setLanguage(String language) { this.language = language; }
-
     public Boolean getRead() { return read; }
     public void setRead(Boolean read) { this.read = read; }
-
-    public List<Borrow> getBorrows() { return  borrows; }
-    public  void setBorrows(List<Borrow> borrows) { this.borrows = borrows; }
-
-    public boolean isAvailable() {
-        return borrows.stream().noneMatch(borrow -> borrow.getReturnDate() == null);
-    }
-
 }

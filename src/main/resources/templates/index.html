@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html" xmlns:style="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>Моя библиотека</title>
@@ -92,141 +92,123 @@
             animation: fadeOut 3s forwards;
         }
 
-       footer {
-       color: #2c3e50;
+        footer {
+            color: #2c3e50;
             text-align: center;
             border-bottom: 3px solid #3498db;
             padding-bottom: 10px;
-            }
+        }
 
         @keyframes fadeOut {
-        0% { opacity: 1; }
-        70% { opacity: 1; }
-        100% { opacity: 0; }
+            0% { opacity: 1; }
+            70% { opacity: 1; }
+            100% { opacity: 0; }
         }
     </style>
 </head>
 <body>
+<div style="text-align: right; padding: 10px; background: #f0f0f0;">
+    👤 <span th:text="${fullName}"></span>
+    | <a href="/profile">Мой профиль</a>
+    | <a href="/logout">Выйти</a>
+</div>
+
+<div id="userRole" th:attr="data-role=${#authorization.expression('hasRole(''ADMIN'')') ? 'ADMIN' : 'USER'}" style="display: none;"></div>
+
 <h1>📚 Моя библиотека (тестовый проект)</h1>
-<div class="add-book-form">
-    <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; gap: 25px;">
-        <h2>➕ Добавить новую книгу</h2>
 
-        <input type="text" id="title" placeholder="Название" style="padding: 8px; margin: 5px;">
-        <input type="text" id="author" placeholder="Автор" style="padding: 8px; margin: 5px;">
-        <input type="number" id="year" placeholder="Год" style="padding: 8px; margin: 5px" maxlength="4" oninput="this.value = this.value.slice(0, 4)" >
-        <input type="text" id="genre" placeholder="Жанр" style="padding: 8px; margin: 5px;">
-        <input type="number" id="pages" placeholder="Страниц" style="padding: 8px; margin: 5px" maxlength="5" oninput="this.value = this.value.slice(0, 5)">
+<div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+    <div class="add-book-form">
+        <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; gap: 25px;">
+            <h2>➕ Добавить новую книгу</h2>
+            <input type="text" id="title" placeholder="Название" style="padding: 8px; margin: 5px;">
+            <input type="text" id="author" placeholder="Автор" style="padding: 8px; margin: 5px;">
+            <input type="number" id="year" placeholder="Год" style="padding: 8px; margin: 5px" maxlength="4" oninput="this.value = this.value.slice(0, 4)">
+            <input type="text" id="genre" placeholder="Жанр" style="padding: 8px; margin: 5px;">
+            <input type="text" id="language" placeholder="Язык" style="padding: 8px; margin: 5px;">
+            <input type="number" id="pages" placeholder="Страниц" style="padding: 8px; margin: 5px" maxlength="5" oninput="this.value = this.value.slice(0, 5)">
+            <div style="display: flex; gap: 15px; align-items: centre; margin: 5px;">
+                <label style="display: flex; align-items: center; gap: 6px;">
+                <input type="checkbox" id="read" style="width: 18px; height: 18px;">
+                   <span>✅ Прочитано</span>
+                </label>
+            </div>
 
-        <button onclick="addBook()" style="padding: 8px 20px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
-            Добавить книгу
-        </button>
+            <button onclick="addBook()" style="padding: 8px 20px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                Добавить книгу
+            </button>
+        </div>
     </div>
-        <div id="successMessage" class="success">Книга успешно добавлена!</div>
-    </div>
+</div>
 
 <!-- Форма редактирования (скрыта по умолчанию) -->
-<div id="editForm" class="add-book-form" style="display: none; background: #e8f4f8; border-left: 5px solid #f39c12;">
-    <h2>✏️ Редактировать книгу</h2>
-
-    <input type="hidden" id="editId">
-
-    <input type="text" id="editTitle" placeholder="Название" style="padding: 8px; margin: 5px;">
-    <input type="text" id="editAuthor" placeholder="Автор" style="padding: 8px; margin: 5px;">
-    <input type="number" id="editYear" placeholder="Год" style="padding: 8px; margin: 5px;"
-           min="1000" max="2026" step="1">
-    <input type="text" id="editGenre" placeholder="Жанр" style="padding: 8px; margin: 5px;">
-    <input type="number" id="editPages" placeholder="Страниц" style="padding: 8px; margin: 5px;" min="1">
-
-    <button onclick="updateBook()" style="background: #f39c12; color: white; border: none; padding: 8px 20px;
-    border-radius: 4px; cursor: pointer;">
-        💾 Сохранить изменения
-    </button>
-    <button onclick="hideEditForm()" style="background: #95a5a6; color: white; border: none; padding: 8px 20px;
-    border-radius: 4px; cursor: pointer; margin-left: 10px;">
-        ❌ Отмена
-    </button>
+<div th:if="${#authorization.expression('hasRole(''ADMIN'')')}">
+    <div id="editForm" class="add-book-form" style="display: none; background: #e8f4f8; border-left: 5px solid #f39c12;">
+        <h2>✏️ Редактировать книгу</h2>
+        <input type="hidden" id="editId">
+        <input type="text" id="editTitle" placeholder="Название" style="padding: 8px; margin: 5px;">
+        <input type="text" id="editAuthor" placeholder="Автор" style="padding: 8px; margin: 5px;">
+        <input type="number" id="editYear" placeholder="Год" style="padding: 8px; margin: 5px;" min="1000" max="2026" step="1">
+        <input type="text" id="editGenre" placeholder="Жанр" style="padding: 8px; margin: 5px;">
+        <input type="text" id="editLanguage" placeholder="Язык" style="padding: 8px; margin: 5px;">
+        <input type="number" id="editPages" placeholder="Страниц" style="padding: 8px; margin: 5px;" min="1">
+        <label style="display: inline-flex; align-items: center; gap: 8px; margin: 5px; padding: 8px; background: #f8f9fa; border-radius: 6px;">
+            <input type="checkbox" id="editRead" style="width: 18px; height: 18px;">
+            <span>📘 Отметить как прочитанное</span>
+        </label>
+        <button onclick="updateBook()" style="background: #f39c12; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer;">
+            💾 Сохранить изменения
+        </button>
+        <button onclick="hideEditForm()" style="background: #95a5a6; color: white; border: none; padding: 8px 20px; border-radius: 4px; cursor: pointer; margin-left: 10px;">
+            ❌ Отмена
+        </button>
+    </div>
 </div>
 
 <!-- Поиск по автору и названию -->
 <div style="background: white; border-radius: 8px; padding: 20px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
     <h3 style="margin-top: 0; color: #2c3e50;">🔍 Поиск книг</h3>
-
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px;">
         <div>
             <label style="display: block; margin-bottom: 5px; color: #7f8c8d;">Автор:</label>
-            <input type="text" id="searchAuthor" placeholder="Введите автора..."
-                   style="width: 95%; padding: 12px; border: 2px solid #3498db; border-radius: 6px; font-size: 16px;">
+            <input type="text" id="searchAuthor" placeholder="Введите автора..." style="width: 95%; padding: 12px; border: 2px solid #3498db; border-radius: 6px; font-size: 16px;">
         </div>
         <div>
             <label style="display: block; margin-bottom: 5px; color: #7f8c8d;">Название:</label>
-            <input type="text" id="searchTitle" placeholder="Введите название..."
-                   style="width: 95%; padding: 12px; border: 2px solid #3498db; border-radius: 6px; font-size: 16px;">
+            <input type="text" id="searchTitle" placeholder="Введите название..." style="width: 95%; padding: 12px; border: 2px solid #3498db; border-radius: 6px; font-size: 16px;">
         </div>
     </div>
-
     <div style="display: flex; gap: 25px; margin-top: 15px; justify-content: center;">
-        <button onclick="searchBooks()"
-                style="background: #3498db; color: white; border: none; padding: 10px 45px;
-                border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold;">
-            🔍 Найти
-        </button>
-        <button onclick="resetSearch()"
-                style="background: #95a5a6; color: white; border: none; padding: 10px 45px;
-                border-radius: 6px; cursor: pointer; font-size: 16px;">
-            ✖️ Сброс
-        </button>
+        <button onclick="searchBooks()" style="background: #3498db; color: white; border: none; padding: 10px 45px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold;">🔍 Найти</button>
+        <button onclick="resetSearch()" style="background: #95a5a6; color: white; border: none; padding: 10px 45px; border-radius: 6px; cursor: pointer; font-size: 16px;">✖️ Сброс</button>
     </div>
-
     <div id="searchResult" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 4px; color: #7f8c8d; font-style: italic;"></div>
 </div>
+<div id="successMessage" class="success">Книга успешно добавлена!</div>
 
-
-    <!--    <h2>Добавить новую книгу</h2>-->
-    <!--    <div class="form-group">-->
-    <!--        <label>Название:</label>-->
-    <!--        <input type="text" id="titleInput" placeholder="Введите название">-->
-    <!--    </div>-->
-    <!--    <div class="form-group">-->
-    <!--        <label>Автор:</label>-->
-    <!--        <input type="text" id="authorInput" placeholder="Введите автора">-->
-    <!--    </div>-->
-    <!--    <div class="form-group">-->
-    <!--        <label>Год:</label>-->
-    <!--        <input type="number" id="yearInput" placeholder="Год навзания">-->
-    <!--    </div>-->
-    <!--    <div class="form-group">-->
-    <!--        <label>Жанр:</label>-->
-    <!--        <input type="text" id="genreInput" placeholder="Жанр">-->
-    <!--    </div>-->
-    <!--    <div class="form-group">-->
-    <!--        <label>Страницы:</label>-->
-    <!--        <input type="number" id="pagesInput" placeholder="Количество страниц">-->
-    <!--    </div>-->
-    <!--    <button onclick="addBook()">Добавть книгу</button>-->
-    <!--    <div id="successMessage" class="success">Книга успешно добавлена!</div>-->
-    <!--</div>-->
-
-    <div class="stats" id="stats">
-        <div class="stat-item">
-            <div class="stat-value" id="totalBooks">0</div>
-            <div class="stat-label">Всего книг</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value" id="totalAuthors">0</div>
-            <div class="stat-label">Авторов</div>
-        </div>
-        <div class="stat-item">
-            <div class="stat-value" id="avgPages">0</div>
-            <div class="stat-label">Сред. страниц</div>
-        </div>
+<div class="stats" id="stats">
+    <div class="stat-item">
+        <div class="stat-value" id="totalBooks">0</div>
+        <div class="stat-label">Всего книг</div>
     </div>
+    <div class="stat-item">
+        <div class="stat-value" id="totalAuthors">0</div>
+        <div class="stat-label">Авторов</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-value" id="avgPages">0</div>
+        <div class="stat-label">Сред. страниц</div>
+    </div>
+</div>
 
-    <div id="booksContainer"></div>
-
-    <div class="loading" id="loading">Загрузка книг...</div>
+<div id="booksContainer"></div>
+<div class="loading" id="loading">Загрузка книг...</div>
 
 <script>
+    // Определяем роль пользователя
+    const userRole = document.getElementById('userRole')?.getAttribute('data-role') || 'USER';
+    const isAdmin = userRole === 'ADMIN';
+
     // Загружаем книги из нашего API
     function loadBooks() {
         fetch('/api/books')
@@ -237,10 +219,7 @@
                 return response.json();
             })
             .then(books => {
-                // Скрываем индикатор загрузки
                 document.getElementById('loading').style.display = 'none';
-
-                // Очищаем контейнер перед добавлением
                 const container = document.getElementById('booksContainer');
                 container.innerHTML = '';
 
@@ -252,25 +231,33 @@
                     return;
                 }
 
-                // Подсчитываем статистику
                 const totalBooks = books.length;
                 const uniqueAuthors = new Set(books.map(b => b.author)).size;
-
                 let totalPages = 0;
                 books.forEach(book => {
                     if (book.pageCount) totalPages += book.pageCount;
                 });
                 const avgPages = totalBooks > 0 ? Math.round(totalPages / totalBooks) : 0;
 
-                // Обновляем статистику
                 document.getElementById('totalBooks').textContent = totalBooks;
                 document.getElementById('totalAuthors').textContent = uniqueAuthors;
                 document.getElementById('avgPages').textContent = avgPages;
 
-                // Отображаем книги
                 books.forEach(book => {
                     const bookElement = document.createElement('div');
                     bookElement.className = 'book';
+
+                    const adminButtons = isAdmin ? `
+                        <button onclick='showEditForm(${JSON.stringify(book).replace(/'/g, "\\'")}); event.stopPropagation()'
+                                style="background: #f39c12; color: white; border: none; padding: 8px 40px; border-radius: 4px; cursor: pointer; font-size: 14px; margin-right: 5px;">
+                            <a th:href="@{/api/books/edit/{id}(id=${book.id})}">✏️Редактировать</a>
+                        </button>
+                        <button onclick="deleteBook(${book.id})"
+                                style="background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 14px;">
+                            🗑️ Удалить
+                        </button>
+                    ` : '<span style="color: #7f8c8d; font-size: 12px;">только просмотр</span>';
+
                     bookElement.innerHTML = `
                         <div style="display: flex; justify-content: space-between; align-items: start;">
                             <div style="flex-grow: 1; cursor: pointer;" onclick='showEditForm(${JSON.stringify(book).replace(/'/g, "\\'")})'>
@@ -279,17 +266,10 @@
                                 <p>📅 Год: ${book.publicationYear || 'неизвестен'}</p>
                                 <p>📖 Жанр: ${book.genre || 'не указан'}</p>
                                 <p>📄 Страниц: ${book.pageCount || 'не указано'}</p>
+                                <p>🌐 Язык: ${book.language || 'не указано'}</p>
+                                <p>${book.read ? '✅ Прочитано' : '📖 Не прочитано'}</p>
                             </div>
-                            <div>
-                                <button onclick='showEditForm(${JSON.stringify(book).replace(/'/g, "\\'")}); event.stopPropagation()'
-                                        style="background: #f39c12; color: white; border: none; padding: 8px 40px; border-radius: 4px; cursor: pointer; font-size: 14px; margin-right: 5px;">
-                                    ✏️ Редактировать
-                                </button>
-                                <button onclick="deleteBook(${book.id})"
-                                        style="background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 14px;">
-                                    🗑️ Удалить
-                                </button>
-                            </div>
+                            <div>${adminButtons}</div>
                         </div>
                     `;
                     container.appendChild(bookElement);
@@ -297,8 +277,7 @@
             })
             .catch(error => {
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('booksContainer').innerHTML =
-                    `<div class="error">❌ Ошибка: ${error.message}</div>`;
+                document.getElementById('booksContainer').innerHTML = `<div class="error">❌ Ошибка: ${error.message}</div>`;
                 console.error('Ошибка:', error);
             });
     }
@@ -309,6 +288,8 @@
         const year = document.getElementById('year').value;
         const genre = document.getElementById('genre').value.trim();
         const pages = document.getElementById('pages').value;
+        const language = document.getElementById('language').value.trim();
+        const read = document.getElementById('read').checked;
 
         if (!title || !author) {
             alert('Название и автор обязательны!');
@@ -320,170 +301,121 @@
             author: author,
             publicationYear: year ? parseInt(year) : null,
             genre: genre || null,
-            pageCount: pages ? parseInt(pages) : null
+            pageCount: pages ? parseInt(pages) : null,
+            language: language || null,
+            read: read
         };
-
-        console.log('Отправляем книгу:', book);
 
         fetch('/api/books', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(book)
         })
         .then(response => {
-            if (!response.ok) {
-                throw new Error('Ошибка при добавлении');
-            }
+            if (!response.ok) throw new Error('Ошибка при добавлении');
             return response.json();
         })
-        .then(newBook => {
-            console.log('Книга добавлена:', newBook);
-
+        .then(() => {
             document.getElementById('title').value = '';
             document.getElementById('author').value = '';
             document.getElementById('year').value = '';
             document.getElementById('genre').value = '';
             document.getElementById('pages').value = '';
-
+            document.getElementById('language').value = '';
             const successMsg = document.getElementById('successMessage');
             successMsg.style.display = 'block';
-            setTimeout(() => {
-                successMsg.style.display = 'none';
-            }, 3000);
-
+            setTimeout(() => successMsg.style.display = 'none', 3000);
             loadBooks();
         })
         .catch(error => {
-            console.error('Ошибка:', error);
             alert('Ошибка: ' + error.message);
-        });
-    }
-
-    // Поиск книг по автору и названию
-function searchBooks() {
-    const author = document.getElementById('searchAuthor').value.trim();
-    const title = document.getElementById('searchTitle').value.trim();
-
-    if (!author && !title) {
-        alert('Введите автора или название для поиска');
-        return;
-    }
-
-    // Показываем индикатор загрузки
-    document.getElementById('loading').style.display = 'block';
-    document.getElementById('booksContainer').innerHTML = '';
-
-    // Формируем URL с параметрами
-    let url = '/api/books/search?';
-    if (author) url += `author=${encodeURIComponent(author)}&`;
-    if (title) url += `title=${encodeURIComponent(title)}`;
-
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Ошибка поиска');
-            }
-            return response.json();
-        })
-        .then(books => {
-            document.getElementById('loading').style.display = 'none';
-
-            const container = document.getElementById('booksContainer');
-            container.innerHTML = '';
-
-            // Формируем сообщение о результатах поиска
-            let searchQuery = [];
-            if (author) searchQuery.push(`автор: "${author}"`);
-            if (title) searchQuery.push(`название: "${title}"`);
-
-            if (books.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #7f8c8d;">Книги не найдены</p>';
-                document.getElementById('searchResult').innerHTML = `❌ По запросу ${searchQuery.join(' и ')} ничего не найдено`;
-            } else {
-                document.getElementById('searchResult').innerHTML = `✅ Найдено книг: ${books.length} по запросу ${searchQuery.join(' и ')}`;
-
-                // Отображаем найденные книги
-                books.forEach(book => {
-                    const bookElement = document.createElement('div');
-                    bookElement.className = 'book';
-                    bookElement.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: start;">
-                            <div style="flex-grow: 1; cursor: pointer;" onclick="showEditForm(${JSON.stringify(book).replace(/'/g, "\\'")})">
-                                <h3>${book.title || 'Без названия'}</h3>
-                                <p>✍️ ${book.author || 'Неизвестен'}</p>
-                                <p>📅 Год: ${book.publicationYear || 'неизвестен'}</p>
-                                <p>📖 Жанр: ${book.genre || 'не указан'}</p>
-                                <p>📄 Страниц: ${book.pageCount || 'не указано'}</p>
-                            </div>
-                            <div>
-                                <button onclick="showEditForm(${JSON.stringify(book).replace(/'/g, "\\'")}); event.stopPropagation()"
-                                        style="background: #f39c12; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 14px; margin-right: 5px;">
-                                    ✏️ Ред.
-                                </button>
-                                <button onclick="deleteBook(${book.id})"
-                                        style="background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 14px;">
-                                    🗑️ Удалить
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                    container.appendChild(bookElement);
-                });
-            }
-        })
-        .catch(error => {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('booksContainer').innerHTML =
-                `<div class="error">❌ Ошибка: ${error.message}</div>`;
             console.error('Ошибка:', error);
         });
-}
-
-// Сброс поиска и показ всех книг
-function resetSearch() {
-    document.getElementById('searchAuthor').value = '';
-    document.getElementById('searchTitle').value = '';
-    document.getElementById('searchResult').innerHTML = '';
-    loadBooks();  // загружаем все книги
-}
-
-// Добавляем поиск при нажатии Enter
-document.getElementById('searchAuthor').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        searchBooks();
     }
-});
 
-document.getElementById('searchTitle').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        searchBooks();
+    // Поиск книг
+    function searchBooks() {
+        const author = document.getElementById('searchAuthor').value.trim();
+        const title = document.getElementById('searchTitle').value.trim();
+        if (!author && !title) {
+            alert('Введите автора или название для поиска');
+            return;
+        }
+        document.getElementById('loading').style.display = 'block';
+        document.getElementById('booksContainer').innerHTML = '';
+        let url = '/api/books/search?';
+        if (author) url += `author=${encodeURIComponent(author)}&`;
+        if (title) url += `title=${encodeURIComponent(title)}`;
+        fetch(url)
+            .then(response => response.json())
+            .then(books => {
+                document.getElementById('loading').style.display = 'none';
+                const container = document.getElementById('booksContainer');
+                container.innerHTML = '';
+                let searchQuery = [];
+                if (author) searchQuery.push(`автор: "${author}"`);
+                if (title) searchQuery.push(`название: "${title}"`);
+                if (books.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #7f8c8d;">Книги не найдены</p>';
+                    document.getElementById('searchResult').innerHTML = `❌ По запросу ${searchQuery.join(' и ')} ничего не найдено`;
+                } else {
+                    document.getElementById('searchResult').innerHTML = `✅ Найдено книг: ${books.length} по запросу ${searchQuery.join(' и ')}`;
+                    books.forEach(book => {
+                        const bookElement = document.createElement('div');
+                        bookElement.className = 'book';
+                        const adminButtons = isAdmin ? `
+                            <button onclick='showEditForm(${JSON.stringify(book).replace(/'/g, "\\'")}); event.stopPropagation()' style="background: #f39c12; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 14px; margin-right: 5px;">✏️ Ред.</button>
+                            <button onclick="deleteBook(${book.id})" style="background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 14px;">🗑️ Удалить</button>
+                        ` : '';
+                        bookElement.innerHTML = `
+                            <div style="display: flex; justify-content: space-between; align-items: start;">
+                                <div style="flex-grow: 1; cursor: pointer;" onclick='showEditForm(${JSON.stringify(book).replace(/'/g, "\\'")})'>
+                                    <h3>${book.title || 'Без названия'}</h3>
+                                    <p>✍️ ${book.author || 'Неизвестен'}</p>
+                                    <p>📅 Год: ${book.publicationYear || 'неизвестен'}</p>
+                                    <p>📖 Жанр: ${book.genre || 'не указан'}</p>
+                                    <p>📄 Страниц: ${book.pageCount || 'не указано'}</p>
+                                    <p>🌐Язык: ${book.language || 'не указано'}</p>
+                                    <p>${book.read ? '✅ Прочитано' : '📖 Не прочитано'}</p>
+                                </div>
+                                <div>${adminButtons}</div>
+                            </div>
+                        `;
+                        container.appendChild(bookElement);
+                    });
+                }
+            })
+            .catch(error => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('booksContainer').innerHTML = `<div class="error">❌ Ошибка: ${error.message}</div>`;
+            });
     }
-});
+
+    function resetSearch() {
+        document.getElementById('searchAuthor').value = '';
+        document.getElementById('searchTitle').value = '';
+        document.getElementById('searchResult').innerHTML = '';
+        loadBooks();
+    }
+
+    document.getElementById('searchAuthor').addEventListener('keypress', function(e) { if (e.key === 'Enter') searchBooks(); });
+    document.getElementById('searchTitle').addEventListener('keypress', function(e) { if (e.key === 'Enter') searchBooks(); });
 
     function deleteBook(id) {
         if (confirm('Вы действительно хотите удалить эту книгу?')) {
-            fetch(`/api/books/${id}`, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Ошибка при удалении');
-                }
-                const successMsg = document.getElementById('successMessage');
-                successMsg.textContent = 'Книга успешно удалена!';
-                successMsg.style.display = 'block';
-                setTimeout(() => {
-                    successMsg.style.display = 'none';
-                    successMsg.textContent = 'Книга успешно добавлена!';
-                }, 3000);
-                loadBooks();
-            })
-            .catch(error => {
-                alert('Ошибка: ' + error.message);
-                console.error('Ошибка', error);
-            });
+            fetch(`/api/books/${id}`, { method: 'DELETE' })
+                .then(response => {
+                    if (!response.ok) throw new Error('Ошибка при удалении');
+                    const successMsg = document.getElementById('successMessage');
+                    successMsg.textContent = 'Книга успешно удалена!';
+                    successMsg.style.display = 'block';
+                    setTimeout(() => {
+                        successMsg.style.display = 'none';
+                        successMsg.textContent = 'Книга успешно добавлена!';
+                    }, 3000);
+                    loadBooks();
+                })
+                .catch(error => alert('Ошибка: ' + error.message));
         }
     }
 
@@ -493,15 +425,15 @@ document.getElementById('searchTitle').addEventListener('keypress', function(e) 
         document.getElementById('editAuthor').value = book.author || '';
         document.getElementById('editYear').value = book.publicationYear || '';
         document.getElementById('editGenre').value = book.genre || '';
+        document.getElementById('editLanguage').value = book.language || '';
         document.getElementById('editPages').value = book.pageCount || '';
-
+        document.getElementById('editRead').checked = book.read || false;
         document.getElementById('editForm').style.display = 'block';
         document.getElementById('editForm').scrollIntoView({ behavior: 'smooth' });
+
     }
 
-    function hideEditForm() {
-        document.getElementById('editForm').style.display = 'none';
-    }
+    function hideEditForm() { document.getElementById('editForm').style.display = 'none'; }
 
     function updateBook() {
         const id = document.getElementById('editId').value;
@@ -509,11 +441,14 @@ document.getElementById('searchTitle').addEventListener('keypress', function(e) 
         const author = document.getElementById('editAuthor').value.trim();
         const year = document.getElementById('editYear').value;
         const genre = document.getElementById('editGenre').value.trim();
+        const language = document.getElementById('editLanguage').value.trim();
         const pages = document.getElementById('editPages').value;
+        const read = document.getElementById('editRead').checked;
+
 
         if (!title || !author) {
-            alert('Название и автор обязательны!');
-            return;
+        alert('Название и автор обязательны!');
+        return;
         }
 
         const book = {
@@ -521,25 +456,18 @@ document.getElementById('searchTitle').addEventListener('keypress', function(e) 
             author: author,
             publicationYear: year ? parseInt(year) : null,
             genre: genre || null,
-            pageCount: pages ? parseInt(pages) : null
+            language: language || null,
+            pageCount: pages ? parseInt(pages) : null,
+            read: read
         };
-
         fetch(`/api/books/${id}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(book)
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Ошибка при обновлении!');
-            }
-            return response.json();
-        })
+        .then(response => { if (!response.ok) throw new Error('Ошибка при обновлении!'); return response.json(); })
         .then(() => {
             hideEditForm();
-
             const successMsg = document.getElementById('successMessage');
             successMsg.textContent = 'Книга успешно обновлена!';
             successMsg.style.display = 'block';
@@ -547,30 +475,21 @@ document.getElementById('searchTitle').addEventListener('keypress', function(e) 
                 successMsg.style.display = 'none';
                 successMsg.textContent = 'Книга успешно добавлена!';
             }, 3000);
-
             loadBooks();
         })
-        .catch(error => {
-            alert('Ошибка: ' + error.message);
-            console.error('Ошибка:', error);
-        });
+        .catch(error => alert('Ошибка: ' + error.message));
     }
 
-    // Загружаем книги при запуске
     loadBooks();
 </script>
 
 <footer>
-
-
-<div class="rep">
-    <div style="background: white; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
-        <p style="margin: 10px 0; opacity: 0.7; font-size: 14px;">
-            (c) 2026 Проект обучения по Java разработке. Все права защищены.</p>
-        <p style="margin: 10px 0; opacity: 0.7; font-size: 14px;">
-            Java • Spring Boot • SQLite • HTML/CSS • JavaScript
-        </p>
+    <div class="rep">
+        <div style="background: white; padding: 10px; border-radius: 8px; margin-bottom: 10px;">
+            <p style="margin: 10px 0; opacity: 0.7; font-size: 14px;">(c) 2026 Проект обучения по Java разработке. Все права защищены.</p>
+            <p style="margin: 10px 0; opacity: 0.7; font-size: 14px;">Java • Spring Boot • SQLite • HTML/CSS • JavaScript</p>
+        </div>
+    </div>
 </footer>
 </body>
-
 </html>

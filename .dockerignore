@@ -1,0 +1,12 @@
+target/
+*.log
+*.tmp
+.idea/
+*.iml
+.vscode/
+.git/
+.gitignore
+*.bd
+*.db-shm
+*.db-wal
+.DS_Store
